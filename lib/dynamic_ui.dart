@@ -1,0 +1,8 @@
+library dynamic_ui;
+
+import 'package:dynamic_widget/dynamic_widget.dart';
+import 'parsers/elevated_button_parser.dart';
+
+void setupDynamics(){
+  DynamicWidgetBuilder.addParser(ElevatedButtonParser());
+}
