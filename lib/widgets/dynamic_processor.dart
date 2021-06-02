@@ -10,16 +10,16 @@ import 'package:logging/logging.dart';
 class DynamicProcessor extends StatefulWidget {
   final Function(String? event) onEvent;
   final String initialJson;
+  final ClickListener clickListener;
 
-  DynamicProcessor({Key? key, this.initialJson = "{}", required this.onEvent})
+  DynamicProcessor({Key? key, this.initialJson = "{}", required this.onEvent, required this.clickListener})
       : super(key: key);
 
   @override
   _DynamicProcessorState createState() => _DynamicProcessorState();
 }
 
-class _DynamicProcessorState extends State<DynamicProcessor>
-    with ClickListener {
+class _DynamicProcessorState extends State<DynamicProcessor>{
   late String currentJson;
 
   @override
@@ -41,7 +41,7 @@ class _DynamicProcessorState extends State<DynamicProcessor>
               ? SizedBox.expand(
                   child: snapshot.data,
                 )
-              : CircularProgressIndicator();
+              : const CircularProgressIndicator();
         },
       ),
     );
@@ -49,7 +49,8 @@ class _DynamicProcessorState extends State<DynamicProcessor>
 
   Future<Widget> _buildWidget(BuildContext context) async {
     try {
-      return DynamicWidgetBuilder.build(currentJson, context, this) ??
+      Logger("DynamicProcessor").info("currentJson: \n$currentJson");
+      return DynamicWidgetBuilder.build(currentJson, context, widget.clickListener) ??
           Container();
     } catch (e, stacktrace) {
       log('Error during build dynamic content $e',

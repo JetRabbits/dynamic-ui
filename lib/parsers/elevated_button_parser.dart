@@ -1,3 +1,4 @@
+import 'package:dynamic_ui/utils/uri_based_click_listener.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:dynamic_widget/dynamic_widget/utils.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,9 @@ class ElevatedButtonParser extends WidgetParser {
       child: DynamicWidgetBuilder.buildFromMap(
           map['child'], buildContext, listener),
       onPressed: () {
+        if (listener is UriBasedClickListener){
+          listener.parameters.putIfAbsent("context", () => buildContext);
+        }
         listener!.onClicked(clickEvent);
       },
     );
