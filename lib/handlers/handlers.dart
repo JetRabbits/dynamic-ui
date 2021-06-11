@@ -29,7 +29,9 @@ class HandlerProcessor {
               await handler.handle(uri, parameters);
             }
             catch (e, stacktrace) {
-              log('Error during handling uri $uri', name: _loggerName);
+              print(e);
+              print(stacktrace);
+              log('Error during handling uri $uri', stackTrace: stacktrace, name: _loggerName);
               break;
             }
           }

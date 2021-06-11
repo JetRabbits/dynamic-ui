@@ -1,6 +1,5 @@
 library dynamic_ui;
 
-import 'package:dynamic_ui/handlers/handlers.dart';
 import 'package:dynamic_ui/parsers/divider_widget_parser.dart';
 import 'package:dynamic_ui/parsers/file_picker_widget_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_parser.dart';
@@ -23,4 +22,3 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(SpaceWidgetParser());
   DynamicWidgetBuilder.addParser(DividerWidgetParser());
 }
-

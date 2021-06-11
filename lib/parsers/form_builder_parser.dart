@@ -1,4 +1,5 @@
 import 'package:dynamic_ui/dynamic_ui.dart';
+import 'package:dynamic_ui/utils/uri_based_click_listener.dart';
 import 'package:dynamic_ui/widgets/file_picker_widget.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,12 @@ class FormBuilderParser extends WidgetParser {
   Widget parse(Map<String, dynamic> map, BuildContext buildContext,
       ClickListener? listener) {
     try {
+      GlobalKey<FormBuilderState>? globalKey;
+      if (listener is UriBasedClickListener) {
+        globalKey = listener.parameters[map['key']] = GlobalKey<FormBuilderState>();
+      }
       return FormBuilder(
-            key: ValueKey<String>(map['key'] as String),
+            key: globalKey,
             child:
                 DynamicWidgetBuilder.buildFromMap(map['child'], buildContext, listener)!,
             autovalidateMode: map['autovalidateMode'] != null ? AutovalidateMode.values[map['autovalidateMode'] as int] : null,
@@ -33,7 +38,6 @@ class FormBuilderParser extends WidgetParser {
     var realWidget = widget as FormBuilder;
 
     return <String, dynamic>{
-      "key": realWidget.key.toString(),
       "type": widgetName,
       "child": DynamicWidgetBuilder.export(realWidget.child, buildContext),
       "autoValidateMode": realWidget.autovalidateMode?.index,
