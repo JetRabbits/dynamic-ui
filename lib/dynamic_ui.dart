@@ -2,7 +2,9 @@ library dynamic_ui;
 
 import 'package:dynamic_ui/parsers/divider_widget_parser.dart';
 import 'package:dynamic_ui/parsers/file_picker_widget_parser.dart';
+import 'package:dynamic_ui/parsers/form_builder_dropdown_field_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_parser.dart';
+import 'package:dynamic_ui/parsers/form_builder_text_field_parser.dart';
 import 'package:dynamic_ui/parsers/spacer_widget_parser.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 
@@ -21,4 +23,6 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(FormBuilderParser());
   DynamicWidgetBuilder.addParser(SpaceWidgetParser());
   DynamicWidgetBuilder.addParser(DividerWidgetParser());
+  DynamicWidgetBuilder.addParser(FormBuilderDropDownParser());
+  DynamicWidgetBuilder.addParser(FormBuilderTextFieldParser());
 }
