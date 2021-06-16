@@ -9,24 +9,32 @@ class ElevatedButtonParser extends WidgetParser {
   Widget parse(Map<String, dynamic> map, BuildContext buildContext,
       ClickListener? listener) {
     String? clickEvent =
-    map.containsKey("click_event") ? map['click_event'] : "";
+        map.containsKey("click_event") ? map['click_event'] : "";
 
     var button = ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: map.containsKey('color') ? parseHexColor(map['color']) : null,
-        onPrimary: map.containsKey('textColor') ? parseHexColor(map['textColor']) : null,
-        onSurface: map.containsKey('disabledColor') ? parseHexColor(map['disabledColor']) : null,
-        elevation: map.containsKey('disabledElevation')
-            ? map['disabledElevation']?.toDouble()
-            : 0.0,
-        padding: map.containsKey('padding')
-            ? parseEdgeInsetsGeometry(map['padding'])
-            : null,
-      ),
+          primary:
+              map.containsKey('color') ? parseHexColor(map['color']) : null,
+          onPrimary: map.containsKey('textColor')
+              ? parseHexColor(map['textColor'])
+              : null,
+          onSurface: map.containsKey('disabledColor')
+              ? parseHexColor(map['disabledColor'])
+              : null,
+          elevation: map.containsKey('disabledElevation')
+              ? map['disabledElevation']?.toDouble()
+              : 0.0,
+          padding: map.containsKey('padding')
+              ? parseEdgeInsetsGeometry(map['padding'])
+              : null,
+          side: map['side'] != null
+              ? BorderSide(
+                  color: parseHexColor(map['side']!['color']) ?? const Color(0xFF000000),
+                  width: map['side']!['width'] ?? 1.0): null),
       child: DynamicWidgetBuilder.buildFromMap(
           map['child'], buildContext, listener),
       onPressed: () {
-        if (listener is UriBasedClickListener){
+        if (listener is UriBasedClickListener) {
           listener.parameters.putIfAbsent("context", () => buildContext);
         }
         listener!.onClicked(clickEvent);
@@ -47,7 +55,10 @@ class ElevatedButtonParser extends WidgetParser {
     return <String, dynamic>{
       "type": widgetName,
       "color": realWidget.style?.backgroundColor != null
-          ? realWidget.style!.backgroundColor!.resolve(Set.of([MaterialState.selected]))?.value.toRadixString(16)
+          ? realWidget.style!.backgroundColor!
+              .resolve(Set.of([MaterialState.selected]))
+              ?.value
+              .toRadixString(16)
           : null,
       // "disabledColor": realWidget.style?.foregroundColor != null
       //     ? realWidget.disabledColor!.value.toRadixString(16)
@@ -63,12 +74,22 @@ class ElevatedButtonParser extends WidgetParser {
       // "textColor": realWidget.style.foregroundColor.resolve(()) != null
       //     ? realWidget.textColor!.value.toRadixString(16)
       //     : null,
-      "child": DynamicWidgetBuilder.export(realWidget.child, buildContext)
+      "child": DynamicWidgetBuilder.export(realWidget.child, buildContext),
+      "side": realWidget.style?.side != null
+          ? {
+              "color": realWidget.style!.side!
+                  .resolve(Set.of([MaterialState.selected]))
+                  ?.color
+                  .value
+                  .toRadixString(16),
+              "width": realWidget.style!.side!
+                  .resolve(Set.of([MaterialState.selected]))
+                  ?.width
+            }
+          : null
     };
   }
 
   @override
   Type get widgetType => ElevatedButton;
 }
-
-

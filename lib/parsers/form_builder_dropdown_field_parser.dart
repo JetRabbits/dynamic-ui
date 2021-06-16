@@ -15,7 +15,7 @@ class FormBuilderDropDownParser extends WidgetParser {
       "items": realWidget.items.map((e) => e.toString()).toList(),
       "autoValidateMode": realWidget.autovalidateMode.index,
       "name": realWidget.name,
-      "validator": FormFieldValidatorParser.toJson(realWidget.validator),
+      "validator": FormFieldValidatorParser.getRegisteredBuilder(realWidget.name)?.toJson(),
     };
   }
 

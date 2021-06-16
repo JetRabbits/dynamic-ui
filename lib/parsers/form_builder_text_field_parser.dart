@@ -17,7 +17,10 @@ class FormBuilderTextFieldParser extends WidgetParser {
       "maxLines": realWidget.maxLines,
       "autoValidateMode": realWidget.autovalidateMode.index,
       "name": realWidget.name,
-      "validator": FormFieldValidatorParser.toJson(realWidget.validator),
+      "hintText": realWidget.decoration.hintText,
+      "labelText": realWidget.decoration.labelText,
+      "decorationIcon": realWidget.decoration.icon,
+      "validator": FormFieldValidatorParser.getRegisteredBuilder(realWidget.name)?.toJson(),
     };
   }
 
@@ -27,11 +30,12 @@ class FormBuilderTextFieldParser extends WidgetParser {
       name: map['name'],
       autovalidateMode: map['autovalidateMode'] != null ? AutovalidateMode.values[map['autovalidateMode'] as int]: AutovalidateMode.disabled,
       initialValue: map['initialValue'],
-      validator: FormFieldValidatorParser.fromJson(map['validator'], buildContext),
       maxLines: map['maxLines'] != null ? map['maxLines'] as int : 1,
       minLines: map['minLines'] != null ? map['minLines'] as int : null,
       obscureText: map['obscureText'],
       textCapitalization: TextCapitalization.none,
+      decoration: InputDecoration(hintText: map['hintText'], labelText: map['labelText']),
+      validator: FormFieldValidatorParser.fromJson(map['validator'], buildContext),
     );
   }
 
