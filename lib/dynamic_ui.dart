@@ -1,7 +1,9 @@
 library dynamic_ui;
 
+import 'package:dynamic_ui/parsers/date_picker_widget_parser.dart';
 import 'package:dynamic_ui/parsers/divider_widget_parser.dart';
 import 'package:dynamic_ui/parsers/file_picker_widget_parser.dart';
+import 'package:dynamic_ui/parsers/fixed_sized_box_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_dropdown_field_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_text_field_parser.dart';
@@ -25,4 +27,6 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(DividerWidgetParser());
   DynamicWidgetBuilder.addParser(FormBuilderDropDownParser());
   DynamicWidgetBuilder.addParser(FormBuilderTextFieldParser());
+  DynamicWidgetBuilder.addParser(FormBuilderDatePickerParser());
+  DynamicWidgetBuilder.addParser(FixedSizedBoxWidgetParser());
 }

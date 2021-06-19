@@ -4,6 +4,15 @@ import 'package:dynamic_widget/dynamic_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+extension MaterialStatePropertyColorExt on MaterialStateProperty {
+  String? toHexString(MaterialState state){
+    return this.resolve(Set.of([state])).value.toRadixString(16);
+  }
+  String? toResolvedString(MaterialState state){
+    return this.resolve(Set.of([state])).value.toString();
+  }
+}
+
 class ElevatedButtonParser extends WidgetParser {
   @override
   Widget parse(Map<String, dynamic> map, BuildContext buildContext,
@@ -18,8 +27,8 @@ class ElevatedButtonParser extends WidgetParser {
           onPrimary: map.containsKey('textColor')
               ? parseHexColor(map['textColor'])
               : null,
-          onSurface: map.containsKey('disabledColor')
-              ? parseHexColor(map['disabledColor'])
+          onSurface: map.containsKey('disabledTextColor')
+              ? parseHexColor(map['disabledTextColor'])
               : null,
           elevation: map.containsKey('disabledElevation')
               ? map['disabledElevation']?.toDouble()
@@ -34,6 +43,7 @@ class ElevatedButtonParser extends WidgetParser {
       child: DynamicWidgetBuilder.buildFromMap(
           map['child'], buildContext, listener),
       onPressed: () {
+        print('elevated button click');
         if (listener is UriBasedClickListener) {
           listener.parameters.putIfAbsent("context", () => buildContext);
         }
@@ -50,30 +60,14 @@ class ElevatedButtonParser extends WidgetParser {
   @override
   Map<String, dynamic> export(Widget? widget, BuildContext? buildContext) {
     var realWidget = widget as ElevatedButton;
-    var padding = realWidget.style?.padding as EdgeInsets?;
 
     return <String, dynamic>{
       "type": widgetName,
-      "color": realWidget.style?.backgroundColor != null
-          ? realWidget.style!.backgroundColor!
-              .resolve(Set.of([MaterialState.selected]))
-              ?.value
-              .toRadixString(16)
-          : null,
-      // "disabledColor": realWidget.style?.foregroundColor != null
-      //     ? realWidget.disabledColor!.value.toRadixString(16)
-      //     : null,
-      // "disabledElevation": realWidget.style?.elevation.resolve(realWidget.s),
-      // "disabledTextColor": realWidget.disabledTextColor != null
-      //     ? realWidget.disabledTextColor!.value.toRadixString(16)
-      //     : null,
-      // "elevation": realWidget.elevation,
-      // "padding": padding != null
-      //     ? "${padding.left},${padding.top},${padding.right},${padding.bottom}"
-      //     : null,
-      // "textColor": realWidget.style.foregroundColor.resolve(()) != null
-      //     ? realWidget.textColor!.value.toRadixString(16)
-      //     : null,
+      "color": realWidget.style?.backgroundColor?.toHexString(MaterialState.selected),
+      "textColor": realWidget.style?.foregroundColor?.toHexString(MaterialState.selected),
+      "disabledColor": realWidget.style?.backgroundColor?.toHexString(MaterialState.disabled),
+      "disabledTextColor": realWidget.style?.foregroundColor?.toHexString(MaterialState.disabled),
+      "elevation": realWidget.style?.elevation?.toResolvedString(MaterialState.selected),
       "child": DynamicWidgetBuilder.export(realWidget.child, buildContext),
       "side": realWidget.style?.side != null
           ? {

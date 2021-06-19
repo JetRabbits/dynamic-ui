@@ -1,11 +1,10 @@
 import 'package:dynamic_ui/dynamic_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_date_pickers/flutter_date_pickers.dart' as pickers;
+import 'package:intl/intl.dart';
 
-class DatePickerWidget extends StatefulWidget {
+// ignore: must_be_immutable
+class FormBuilderDatePicker extends StatelessWidget {
   final String labelText;
-
-  final VoidCallback? onPressed;
 
   final String name;
 
@@ -13,56 +12,98 @@ class DatePickerWidget extends StatefulWidget {
 
   late DateTime initialValue;
 
-  DatePickerWidget(
-      {Key? key, required this.labelText, this.onPressed, this.errorText, initialValue, required this.name})
-      : super(key: key){
+  final String dateFormat;
+  final GlobalKey _rowKey = GlobalKey();
+
+  final AutovalidateMode autovalidateMode;
+
+  final calendarTextWidget = GlobalKey<FormFieldState>();
+
+  ///
+  /// [dateFormat] DateFormat pattern see intl DateFormat for details
+  ///
+  FormBuilderDatePicker(
+      {Key? key,
+      required this.dateFormat,
+      required this.labelText,
+      this.errorText,
+      required this.name,
+      DateTime? initialValue,
+      this.autovalidateMode = AutovalidateMode.disabled})
+      : super(key: key) {
     this.initialValue = initialValue ?? DateTime.now();
-  }
-
-  @override
-  _DatePickerWidgetState createState() => _DatePickerWidgetState();
-}
-
-class _DatePickerWidgetState extends State<DatePickerWidget> {
-  DateTime? value;
-
-  @override
-  void initState() {
-    value = widget.initialValue;
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      key: _rowKey,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FormBuilderTextField(name: widget.name,
-            validator: FormBuilderValidators.dateString(
-                context, errorText: widget.errorText),
-            inputFormatters: [],
-            initialValue: "$value"),
-        ElevatedButton.icon(
-            onPressed: () {
-              Scaffold.of(context).showBottomSheet((context) =>
-                  Container(
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 3,
-                      child: pickers.DayPicker.single(
-                          selectedDate: widget.initialValue,
-                          onChanged: (DateTime v) {
-                            setState(() {
-                              value = v;
-                            });
-                          },
-                          firstDate: DateTime(widget.initialValue.year),
-                          lastDate: DateTime(widget.initialValue.year, 12)),
-              ));
-            },
-            icon: Icon(Icons.calendar_today),
-            label: Text(widget.labelText)),
+        Expanded(
+          child: FormBuilderTextField(
+            key: calendarTextWidget,
+            autovalidateMode: autovalidateMode,
+            name: name,
+            initialValue: DateFormat(dateFormat).format(initialValue),
+            readOnly: true,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                fillColor: Colors.white,
+                filled: true),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Material(
+          child: SizedBox(
+            height: 48,
+            child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(primary: Color(0xFF1890FF)),
+                onPressed: () {
+                  print(Scaffold.of(_rowKey.currentContext!));
+                  Scaffold.of(_rowKey.currentContext!)
+                      .showBottomSheet((context) => _buildBottomSheet(context));
+                },
+                icon: Icon(Icons.calendar_today),
+                label: Text(
+                  labelText,
+                  style: TextStyle(color: Colors.white),
+                )),
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _buildBottomSheet(context) {
+    return Container(
+      height: 400,
+      child: Column(
+        children: [
+          CalendarDatePicker(
+            initialDate: DateTime.now(),
+            currentDate: DateTime.now(),
+            onDateChanged: (value) {
+              var formBuilderState = FormBuilder.of(_rowKey.currentContext!);
+              formBuilderState
+                  ?.patchValue({name: DateFormat(dateFormat).format(value)});
+              Navigator.of(context).pop();
+            },
+            firstDate: DateTime(2021),
+            lastDate: DateTime(2022),
+          ),
+          SizedBox(
+            height: 40,
+            width: 145,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Color(0xFF1890FF)),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('ЗАКРЫТЬ'),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
