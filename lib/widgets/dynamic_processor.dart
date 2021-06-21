@@ -22,6 +22,8 @@ class DynamicProcessor extends StatefulWidget {
 class _DynamicProcessorState extends State<DynamicProcessor>{
   late String currentJson;
 
+  static final Logger _logger = Logger("DynamicProcessor");
+
   @override
   void initState() {
     currentJson = widget.initialJson;
@@ -49,16 +51,15 @@ class _DynamicProcessorState extends State<DynamicProcessor>{
 
   Future<Widget> _buildWidget(BuildContext context) async {
     try {
-      Logger("DynamicProcessor").info("currentJson: \n$currentJson");
+      _logger.info("currentJson: \n$currentJson");
       return DynamicWidgetBuilder.build(currentJson, context, widget.clickListener) ??
           Container();
     } catch (e, stacktrace) {
-      log('Error during build dynamic content $e',
-          name: "DynamicProcessor",
-          level: Level.SEVERE.value,
-          error: e,
-          stackTrace: stacktrace);
-      return Center(child: Text("Ошибка построения динамического контента"));
+      print(stacktrace);
+      _logger.severe('Error during build dynamic content $e',
+          e,
+          stacktrace);
+      return Center(child: Text(" $stacktrace" , maxLines: 100,));
     }
   }
 

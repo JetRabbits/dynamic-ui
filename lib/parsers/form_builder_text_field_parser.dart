@@ -67,29 +67,28 @@ class FormBuilderTextFieldParser extends WidgetParser {
 
   InputBorder? parseBorder(String borderKeyPrefix, Map<String, dynamic> map) {
     var type = map['borderType'];
-    if (type != null) {
-      switch (type) {
-        case 'OutlineInputBorder':
-          return OutlineInputBorder(
-              borderSide: BorderSide(
-                  style: map['borderStyle'] != null
-                      ? BorderStyle.values[map['borderStyle']]
-                      : BorderStyle.solid,
-                  color: map[borderKeyPrefix + 'Color'],
-                  width: map[borderKeyPrefix + 'Width']),
-              borderRadius: BorderRadius.circular(map["borderRadius"]));
-        case 'UnderlineInputBorder':
-          return UnderlineInputBorder(
-              borderSide: BorderSide(
-                  style: map['borderStyle'] != null
-                      ? BorderStyle.values[map['borderStyle']]
-                      : BorderStyle.solid,
-                  color: map[borderKeyPrefix + 'Color'],
-                  width: map[borderKeyPrefix + 'Width']),
-              borderRadius: BorderRadius.circular(map["borderRadius"]));
-        default:
-          throw 'Unsupported type of border $type';
-      }
+    if (type == null) return null;
+    switch (type) {
+      case 'OutlineInputBorder':
+        return OutlineInputBorder(
+            borderSide: BorderSide(
+                style: map['borderStyle'] != null
+                    ? BorderStyle.values[map['borderStyle']]
+                    : BorderStyle.solid,
+                color: parseHexColor(map[borderKeyPrefix + 'Color']) ?? Colors.black,
+                width: map[borderKeyPrefix + 'Width']?.toDouble() ?? 1.0),
+            borderRadius: BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
+      case 'UnderlineInputBorder':
+        return UnderlineInputBorder(
+            borderSide: BorderSide(
+                style: map['borderStyle'] != null
+                    ? BorderStyle.values[map['borderStyle']]
+                    : BorderStyle.solid,
+                color: parseHexColor(map[borderKeyPrefix + 'Color']) ?? Colors.black,
+                width: map[borderKeyPrefix + 'Width']?.toDouble() ?? 1.0),
+            borderRadius: BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
+      default:
+        throw 'Unsupported type of border $type';
     }
   }
 
@@ -115,7 +114,7 @@ class FormBuilderTextFieldParser extends WidgetParser {
           hintText: map['hintText'],
           labelText: map['labelText'],
           filled: map['filled'],
-          fillColor: map['fillColor'],
+          fillColor: parseHexColor(map['fillColor']),
           icon: DynamicWidgetBuilder.buildFromMap(
               map["decorationIcon"], buildContext, listener),
           enabledBorder: map['borderType'] != null

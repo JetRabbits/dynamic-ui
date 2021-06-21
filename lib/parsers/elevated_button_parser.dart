@@ -6,10 +6,20 @@ import 'package:flutter/widgets.dart';
 
 extension MaterialStatePropertyColorExt on MaterialStateProperty {
   String? toHexString(MaterialState state){
-    return this.resolve(Set.of([state])).value.toRadixString(16);
+    try {
+      return this.resolve(Set.of([state])).value.toRadixString(16);
+    } catch (e) {
+      print('Can not resolve property $state to hex string');
+    }
+    return null;
   }
   String? toResolvedString(MaterialState state){
-    return this.resolve(Set.of([state])).value.toString();
+    try {
+      return this.resolve(Set.of([state])).value.toString();
+    } catch (e) {
+      print('Can not resolve property $state to string');
+    }
+    return null;
   }
 }
 
@@ -20,7 +30,9 @@ class ElevatedButtonParser extends WidgetParser {
     String? clickEvent =
         map.containsKey("click_event") ? map['click_event'] : "";
 
+    GlobalKey _elevatedButtonKey = GlobalKey();
     var button = ElevatedButton(
+      key: _elevatedButtonKey,
       style: ElevatedButton.styleFrom(
           primary:
               map.containsKey('color') ? parseHexColor(map['color']) : null,
@@ -46,6 +58,7 @@ class ElevatedButtonParser extends WidgetParser {
         print('elevated button click');
         if (listener is UriBasedClickListener) {
           listener.parameters.putIfAbsent("context", () => buildContext);
+          listener.parameters.putIfAbsent("buttonContext", () => _elevatedButtonKey.currentContext);
         }
         listener!.onClicked(clickEvent);
       },
@@ -72,8 +85,7 @@ class ElevatedButtonParser extends WidgetParser {
       "side": realWidget.style?.side != null
           ? {
               "color": realWidget.style!.side!
-                  .resolve(Set.of([MaterialState.selected]))
-                  ?.color
+                  .resolve(Set.of([MaterialState.selected]))?.color
                   .value
                   .toRadixString(16),
               "width": realWidget.style!.side!
