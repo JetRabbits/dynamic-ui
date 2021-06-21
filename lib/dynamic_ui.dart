@@ -1,5 +1,7 @@
 library dynamic_ui;
 
+import 'package:dynamic_ui/actions/action_register.dart';
+import 'package:dynamic_ui/handlers/handlers.dart';
 import 'package:dynamic_ui/parsers/action_manager_parser.dart';
 import 'package:dynamic_ui/parsers/date_picker_widget_parser.dart';
 import 'package:dynamic_ui/parsers/divider_widget_parser.dart';
@@ -9,9 +11,9 @@ import 'package:dynamic_ui/parsers/form_builder_dropdown_field_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_text_field_parser.dart';
 import 'package:dynamic_ui/parsers/spacer_widget_parser.dart';
-import 'package:dynamic_ui/widgets/action_manager.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 
+import 'actions/post_action.dart';
 import 'parsers/dynamic_text_form_widget_parser.dart';
 import 'parsers/elevated_button_parser.dart';
 
@@ -33,4 +35,8 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(FormBuilderDatePickerParser());
   DynamicWidgetBuilder.addParser(FixedSizedBoxWidgetParser());
   DynamicWidgetBuilder.addParser(ActionManagerParser());
+
+  HandlersRegistry.register("actions", ActionsHandler());
+
+  ActionRegister.addAction('post',  PostAction.toJson, PostAction.fromJson);
 }

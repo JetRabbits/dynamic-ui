@@ -24,8 +24,14 @@ class ActionManager extends StatelessWidget {
 
   Future<void> execute(BuildContext context) async {
     if (actions.isEmpty) return SynchronousFuture(null);
+    var formBuilderContext = FormBuilder.of(context);
+    if (formBuilderContext != null) {
+      if (!formBuilderContext.saveAndValidate()) return;
+    } else {
+       logger.warning('No form builder for parameters to be processed');
+    }
 
-    var parameters = FormBuilder.of(context)?.value ?? Map<String, dynamic>();
+    var parameters = formBuilderContext?.value ?? Map<String, dynamic>();
     late a.Action currentAction;
     try {
       for (var action in actions) {

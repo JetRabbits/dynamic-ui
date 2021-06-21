@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,9 @@ class DynamicProcessor extends StatefulWidget {
   final String initialJson;
   final ClickListener clickListener;
 
-  DynamicProcessor({Key? key, this.initialJson = "{}", required this.onEvent, required this.clickListener})
+  final Widget? errorWidget;
+
+  DynamicProcessor({Key? key, this.initialJson = "{}", required this.onEvent, required this.clickListener, this.errorWidget})
       : super(key: key);
 
   @override
@@ -41,8 +42,8 @@ class _DynamicProcessorState extends State<DynamicProcessor>{
           }
           return snapshot.hasData
               ? SizedBox.expand(
-                  child: snapshot.data,
-                )
+            child: snapshot.data,
+          )
               : const CircularProgressIndicator();
         },
       ),
@@ -59,7 +60,7 @@ class _DynamicProcessorState extends State<DynamicProcessor>{
       _logger.severe('Error during build dynamic content $e',
           e,
           stacktrace);
-      return Center(child: Text(" $stacktrace" , maxLines: 100,));
+      return Center(child: widget.errorWidget ?? Text("Problem with dynamic content: $stacktrace" , maxLines: 100,));
     }
   }
 

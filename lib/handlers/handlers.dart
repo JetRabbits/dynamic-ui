@@ -1,50 +1,45 @@
 import 'dart:developer';
 
 import 'package:dynamic_ui/dynamic_ui.dart';
+import 'package:dynamic_ui/widgets/action_manager.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 
 abstract class UriHandler {
   Future<void> handle(Uri uri, [Map<String, dynamic>? parameters]);
 }
 
-
 class HandlersRegistry {
-  final Map<String, UriHandler> _handlers = {};
+  static final Map<String, UriHandler> handlers = {};
 
-  void register(String schema, UriHandler handler) {
-    _handlers.putIfAbsent(schema, () => handler);
+  static void register(String schema, UriHandler handler) {
+    handlers.putIfAbsent(schema, () => handler);
   }
 
-  void unregister(String schema) {
-    _handlers.remove(schema);
+  static void unregister(String schema) {
+    handlers.remove(schema);
   }
 }
 
 class HandlerProcessor {
   static final _loggerName = 'HandlerProcessor';
-  final HandlersRegistry registry;
 
   Future<void> process(List<Uri> commands,
       [Map<String, dynamic>? parameters]) async {
     for (var uri in commands) {
-      var handler = registry._handlers[uri.scheme];
-      if (handler ==
-          null) throw "Not found handler for $uri. Please register it";
+      var handler = HandlersRegistry.handlers[uri.scheme];
+      if (handler == null)
+        throw "Not found handler for $uri. Please register it";
       try {
         await handler.handle(uri, parameters);
-      }
-      catch (e, stacktrace) {
+      } catch (e, stacktrace) {
         print(e);
         print(stacktrace);
-        log('Error during handling uri $uri', stackTrace: stacktrace,
-            name: _loggerName);
+        log('Error during handling uri $uri',
+            stackTrace: stacktrace, name: _loggerName);
         break;
       }
     }
   }
-
-  HandlerProcessor(this.registry);
 }
 
 class PostHandler extends UriHandler {
@@ -52,7 +47,6 @@ class PostHandler extends UriHandler {
   Future<void> handle(Uri uri, [Map<String, dynamic>? parameters]) {
     throw UnimplementedError();
   }
-
 }
 
 class FormHandler extends UriHandler {
@@ -68,8 +62,8 @@ class FormHandler extends UriHandler {
         case 'post':
           {
             var formKey = uri.pathSegments[1];
-            var formBuilderStateKey = parameters![formKey] as GlobalKey<
-                FormBuilderState>;
+            var formBuilderStateKey =
+                parameters![formKey] as GlobalKey<FormBuilderState>;
             var formBuilderState = formBuilderStateKey.currentState!;
             if (formBuilderStateKey.currentState!.saveAndValidate()) {
               // var postParams = formBuilderState.value;
@@ -88,5 +82,13 @@ class FormHandler extends UriHandler {
     }
     return Future<void>.value();
   }
+}
 
+class ActionsHandler extends UriHandler {
+  @override
+  Future<void> handle(Uri uri, [Map<String, dynamic>? parameters]) async {
+    var buildContext = parameters?['buttonContext'] as BuildContext?;
+    if (buildContext == null) return;
+    await ActionManager.of(buildContext)?.execute(buildContext);
+  }
 }

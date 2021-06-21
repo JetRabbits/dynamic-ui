@@ -1,4 +1,4 @@
-import 'action_register.dart';
+
 
 abstract class Action {
   final String id;
@@ -8,9 +8,5 @@ abstract class Action {
 
   Action(
       {required this.id,
-      required this.type,
-      required fromJson,
-      required toJson}) {
-    ActionRegister.addAction(type, toJson, fromJson);
-  }
+      required this.type});
 }
