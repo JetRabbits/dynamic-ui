@@ -8,10 +8,7 @@ class FormFieldValidatorBuilder {
   final dynamic value;
 
   FormFieldValidatorBuilder(
-      {required this.type,
-      this.children,
-      this.errorText,
-      this.value});
+      {required this.type, this.children, this.errorText, this.value});
 
   FormFieldValidator<String?> build(BuildContext context) {
     switch (type) {
@@ -62,7 +59,10 @@ class FormFieldValidatorBuilder {
   dynamic toJson() {
     switch (type) {
       case 'compose':
-        return {'children': children!.map<dynamic>((v) => v.toJson()).toList(), 'type': type};
+        return {
+          'children': children!.map<dynamic>((v) => v.toJson()).toList(),
+          'type': type
+        };
       case 'notEqual':
       case 'equal':
       case 'min':

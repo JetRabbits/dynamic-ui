@@ -1,6 +1,5 @@
 library dynamic_ui;
 
-import 'package:dynamic_ui/actions/action_register.dart';
 import 'package:dynamic_ui/handlers/handlers.dart';
 import 'package:dynamic_ui/parsers/action_manager_parser.dart';
 import 'package:dynamic_ui/parsers/date_picker_widget_parser.dart';
@@ -12,8 +11,12 @@ import 'package:dynamic_ui/parsers/form_builder_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_text_field_parser.dart';
 import 'package:dynamic_ui/parsers/spacer_widget_parser.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
+import 'package:flutter_draft/flutter_draft.dart';
+import 'package:get_it/get_it.dart';
 
+import 'actions/navigator_action.dart';
 import 'actions/post_action.dart';
+import 'blocs/actions_bloc/actions_bloc.dart';
 import 'parsers/dynamic_text_form_widget_parser.dart';
 import 'parsers/elevated_button_parser.dart';
 
@@ -24,6 +27,8 @@ export 'package:dynamic_widget/dynamic_widget.dart';
 export 'package:flutter_form_builder/flutter_form_builder.dart';
 
 void setupDynamics() {
+  GetIt.I.registerSingleton(ActionsBloc());
+
   DynamicWidgetBuilder.addParser(ElevatedButtonParser());
   DynamicWidgetBuilder.addParser(FilePickerButtonParser());
   DynamicWidgetBuilder.addParser(DynamicTextFormFieldParser());
@@ -36,7 +41,9 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(FixedSizedBoxWidgetParser());
   DynamicWidgetBuilder.addParser(ActionManagerParser());
 
-  HandlersRegistry.register("actions", ActionsHandler());
+  HandlersRegistry.register("actions", ActionsHandler(GetIt.I()));
 
-  ActionRegister.addAction('post',  PostAction.toJson, PostAction.fromJson);
+  ActionRegister.addAction('post', PostAction.toJson, PostAction.fromJson);
+  ActionRegister.addAction(
+      'navigator', NavigatorAction.toJson, NavigatorAction.fromJson);
 }

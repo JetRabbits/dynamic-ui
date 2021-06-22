@@ -12,14 +12,13 @@ class FilePickerButtonParser extends WidgetParser {
     String? clickEvent =
         map.containsKey("click_event") ? map['click_event'] : "";
 
-
-
     return FilePickerWidget(
       onFileChoosed: (FilePickerResult result) {
         if (listener is UriBasedClickListener) {
           var parameters = listener.parameters;
           parameters.clear();
-          var files = result.files.map((file) => {file.name : file.bytes}).toList();
+          var files =
+              result.files.map((file) => {file.name: file.bytes}).toList();
           parameters.putIfAbsent("files", () => files);
         }
       },

@@ -1,9 +1,9 @@
 import 'package:dynamic_ui/handlers/handlers.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
-import 'package:flutter/widgets.dart';
 
 class UriBasedClickListener extends ClickListener {
   final HandlerProcessor handlerProcessor;
+
   UriBasedClickListener(this.handlerProcessor);
 
   final Map<String, dynamic> parameters = {};

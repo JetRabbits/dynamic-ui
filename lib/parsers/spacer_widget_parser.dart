@@ -10,8 +10,9 @@ class SpaceWidgetParser extends WidgetParser {
   }
 
   @override
-  Widget parse(Map<String, dynamic> map, BuildContext buildContext, ClickListener? listener) {
-    return Spacer(flex: map['flex'] != null ? map['flex']: null);
+  Widget parse(Map<String, dynamic> map, BuildContext buildContext,
+      ClickListener? listener) {
+    return Spacer(flex: map['flex'] != null ? map['flex'] : null);
   }
 
   @override
@@ -19,5 +20,4 @@ class SpaceWidgetParser extends WidgetParser {
 
   @override
   Type get widgetType => Spacer;
-
 }

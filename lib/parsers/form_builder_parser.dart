@@ -1,6 +1,5 @@
 import 'package:dynamic_ui/dynamic_ui.dart';
 import 'package:dynamic_ui/utils/uri_based_click_listener.dart';
-import 'package:dynamic_ui/widgets/file_picker_widget.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,17 +11,19 @@ class FormBuilderParser extends WidgetParser {
     try {
       GlobalKey<FormBuilderState>? globalKey;
       if (listener is UriBasedClickListener) {
-        globalKey = listener.parameters[map['key']] = GlobalKey<FormBuilderState>();
+        globalKey =
+            listener.parameters[map['key']] = GlobalKey<FormBuilderState>();
       }
       return FormBuilder(
-            key: globalKey,
-            child:
-                DynamicWidgetBuilder.buildFromMap(map['child'], buildContext, listener)!,
-            autovalidateMode: map['autovalidateMode'] != null ? AutovalidateMode.values[map['autovalidateMode'] as int] : null,
-            enabled: map['enabled'],
-            skipDisabled: map['skipDisabled'],
-            initialValue: map['initialValue']
-          );
+          key: globalKey,
+          child: DynamicWidgetBuilder.buildFromMap(
+              map['child'], buildContext, listener)!,
+          autovalidateMode: map['autovalidateMode'] != null
+              ? AutovalidateMode.values[map['autovalidateMode'] as int]
+              : null,
+          enabled: map['enabled'],
+          skipDisabled: map['skipDisabled'],
+          initialValue: map['initialValue']);
     } catch (e, stacktrace) {
       print(e);
       print(stacktrace);

@@ -75,18 +75,22 @@ class FormBuilderTextFieldParser extends WidgetParser {
                 style: map['borderStyle'] != null
                     ? BorderStyle.values[map['borderStyle']]
                     : BorderStyle.solid,
-                color: parseHexColor(map[borderKeyPrefix + 'Color']) ?? Colors.black,
+                color: parseHexColor(map[borderKeyPrefix + 'Color']) ??
+                    Colors.black,
                 width: map[borderKeyPrefix + 'Width']?.toDouble() ?? 1.0),
-            borderRadius: BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
+            borderRadius:
+                BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
       case 'UnderlineInputBorder':
         return UnderlineInputBorder(
             borderSide: BorderSide(
                 style: map['borderStyle'] != null
                     ? BorderStyle.values[map['borderStyle']]
                     : BorderStyle.solid,
-                color: parseHexColor(map[borderKeyPrefix + 'Color']) ?? Colors.black,
+                color: parseHexColor(map[borderKeyPrefix + 'Color']) ??
+                    Colors.black,
                 width: map[borderKeyPrefix + 'Width']?.toDouble() ?? 1.0),
-            borderRadius: BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
+            borderRadius:
+                BorderRadius.circular(map["borderRadius"]?.toDouble() ?? 1.0));
       default:
         throw 'Unsupported type of border $type';
     }

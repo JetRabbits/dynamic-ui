@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dynamic_ui/utils/parameters_utils.dart';
+import 'package:flutter_draft/flutter_draft.dart';
 import 'package:http/http.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logging/logging.dart';
-
-import 'action.dart';
 
 part 'post_action.g.dart';
 
@@ -28,19 +28,15 @@ class PostAction extends Action {
   static final _logger = Logger('PostAction');
 
   @override
-  Future<void> perform(Map<String, dynamic> parameters) async {
+  Future<void> perform(BuildContext context, Map<String, dynamic> parameters) async {
     print(parameters);
     String template = jsonEncode(payload);
-    String resultForPost = template;
-
-    parameters.keys.forEach((key) =>
-        resultForPost = resultForPost.replaceAll("#$key#", parameters[key]));
-    _logger.info("resultForPost: ${resultForPost}");
+    var resultForPost = substituteParams(template, parameters);
     Response response = await post(Uri.parse(url),
         headers: {
           HttpHeaders.contentTypeHeader: ContentType.json.toString(),
         },
-        body: jsonDecode(resultForPost));
+        body: resultForPost);
     _logger.info("response: ${response.body}");
     return Future.value();
   }
