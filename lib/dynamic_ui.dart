@@ -14,17 +14,21 @@ import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:flutter_draft/flutter_draft.dart';
 import 'package:get_it/get_it.dart';
 
+import 'actions/http_action.dart';
+import 'actions/launch_action.dart';
 import 'actions/navigator_action.dart';
-import 'actions/post_action.dart';
 import 'blocs/actions_bloc/actions_bloc.dart';
 import 'parsers/dynamic_text_form_widget_parser.dart';
 import 'parsers/elevated_button_parser.dart';
 
-export 'package:dynamic_ui/actions/post_action.dart';
 export 'package:dynamic_ui/widgets/dynamic_processor.dart';
 export 'package:dynamic_ui/widgets/dynamic_text_form_field.dart';
 export 'package:dynamic_widget/dynamic_widget.dart';
 export 'package:flutter_form_builder/flutter_form_builder.dart';
+
+export 'actions/http_action.dart';
+export 'actions/launch_action.dart';
+export 'actions/navigator_action.dart';
 
 void setupDynamics() {
   GetIt.I.registerSingleton(ActionsBloc());
@@ -43,7 +47,9 @@ void setupDynamics() {
 
   HandlersRegistry.register("actions", ActionsHandler(GetIt.I()));
 
-  ActionRegister.addAction('post', PostAction.toJson, PostAction.fromJson);
+  ActionRegister.addAction('http', HttpAction.toJson, HttpAction.fromJson);
+  ActionRegister.addAction(
+      'launch', LaunchAction.toJson, LaunchAction.fromJson);
   ActionRegister.addAction(
       'navigator', NavigatorAction.toJson, NavigatorAction.fromJson);
 }

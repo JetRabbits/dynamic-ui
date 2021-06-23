@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dynamic_ui/dynamic_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +19,11 @@ class FormBuilderDatePicker extends StatelessWidget {
 
   final AutovalidateMode autovalidateMode;
 
-  final calendarTextWidget = GlobalKey<FormFieldState>();
+  final PickerDialogStyle pickerDialogStyle;
+
+  final Widget? closeButton;
+
+  double? bottomSheetHeight;
 
   ///
   /// [dateFormat] DateFormat pattern see intl DateFormat for details
@@ -27,9 +33,12 @@ class FormBuilderDatePicker extends StatelessWidget {
       required this.dateFormat,
       required this.labelText,
       this.errorText,
+      this.pickerDialogStyle = PickerDialogStyle.BOTTOM_SHEET,
+      this.bottomSheetHeight,
       required this.name,
       DateTime? initialValue,
-      this.autovalidateMode = AutovalidateMode.disabled})
+      this.autovalidateMode = AutovalidateMode.disabled,
+      this.closeButton})
       : super(key: key) {
     this.initialValue = initialValue ?? DateTime.now();
   }
@@ -42,7 +51,6 @@ class FormBuilderDatePicker extends StatelessWidget {
       children: [
         Expanded(
           child: FormBuilderTextField(
-            key: calendarTextWidget,
             autovalidateMode: autovalidateMode,
             name: name,
             initialValue: DateFormat(dateFormat).format(initialValue),
@@ -60,10 +68,23 @@ class FormBuilderDatePicker extends StatelessWidget {
             height: 48,
             child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(primary: Color(0xFF1890FF)),
-                onPressed: () {
-                  print(Scaffold.of(_rowKey.currentContext!));
-                  Scaffold.of(_rowKey.currentContext!)
-                      .showBottomSheet((context) => _buildBottomSheet(context));
+                onPressed: () async {
+                  switch (pickerDialogStyle) {
+                    case PickerDialogStyle.BOTTOM_SHEET:
+                      Scaffold.of(_rowKey.currentContext!).showBottomSheet(
+                          (context) => _buildBottomSheet(context));
+                      break;
+                    case PickerDialogStyle.DIALOG:
+                      DateTime? _value = await showDatePicker(
+                          context: context,
+                          initialDate: getValueDate(),
+                          currentDate: DateTime.now(),
+                          firstDate: DateTime(getValueDate().year),
+                          lastDate: DateTime(getValueDate().year + 1));
+                      _updateFormValue(_value);
+
+                      break;
+                  }
                 },
                 icon: Icon(Icons.calendar_today),
                 label: Text(
@@ -76,34 +97,56 @@ class FormBuilderDatePicker extends StatelessWidget {
     );
   }
 
+  DateTime getValueDate() {
+    print("getValueDate");
+    var formBuilderState = FormBuilder.of(_rowKey.currentContext!);
+    var _value = formBuilderState?.value[name];
+    print("${formBuilderState?.value}");
+    print("$_value");
+
+    if (_value is String && _value.isNotEmpty) {
+      return DateFormat(dateFormat).parse(_value);
+    }
+    return DateTime.now();
+  }
+
   Widget _buildBottomSheet(context) {
     return Container(
-      height: 400,
+      height: bottomSheetHeight ?? max(MediaQuery.of(context).size.height / 3, 400),
       child: Column(
         children: [
           CalendarDatePicker(
-            initialDate: DateTime.now(),
+            initialDate: getValueDate(),
             currentDate: DateTime.now(),
             onDateChanged: (value) {
-              var formBuilderState = FormBuilder.of(_rowKey.currentContext!);
-              formBuilderState
-                  ?.patchValue({name: DateFormat(dateFormat).format(value)});
+              _updateFormValue(value);
               Navigator.of(context).pop();
             },
-            firstDate: DateTime(2021),
-            lastDate: DateTime(2022),
+            firstDate: DateTime(getValueDate().year),
+            lastDate: DateTime(getValueDate().year + 1),
           ),
-          SizedBox(
-            height: 40,
-            width: 145,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Color(0xFF1890FF)),
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('ЗАКРЫТЬ'),
-            ),
-          )
+          if (closeButton == null)
+            SizedBox(
+              height: 40,
+              width: 145,
+              child: ElevatedButton(
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF1890FF)),
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('ЗАКРЫТЬ'),
+              ),
+            )
         ],
       ),
     );
   }
+
+  void _updateFormValue(DateTime? value) {
+    if (value == null) return;
+    var formBuilderState = FormBuilder.of(_rowKey.currentContext!);
+    formBuilderState?.patchValue({"$name": DateFormat(dateFormat).format(value)});
+    formBuilderState?.save();
+  }
 }
+
+enum PickerDialogStyle { BOTTOM_SHEET, DIALOG }

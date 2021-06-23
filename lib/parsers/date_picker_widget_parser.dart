@@ -11,7 +11,11 @@ class FormBuilderDatePickerParser extends WidgetParser {
     return <String, dynamic>{
       "type": widgetName,
       "labelText": realWidget.labelText,
+      "errorText": realWidget.errorText,
+      "closeButton": DynamicWidgetBuilder.export(realWidget.closeButton, buildContext),
       "dateFormat": realWidget.dateFormat,
+      "pickerDialogStyle": realWidget.pickerDialogStyle.index,
+      "bottomSheetHeight": realWidget.bottomSheetHeight,
       "initialValue": realWidget.initialValue.toIso8601String(),
       "autovalidateMode": realWidget.autovalidateMode.index,
       "name": realWidget.name
@@ -22,13 +26,21 @@ class FormBuilderDatePickerParser extends WidgetParser {
   Widget parse(Map<String, dynamic> map, BuildContext buildContext,
       ClickListener? listener) {
     return FormBuilderDatePicker(
-        labelText: map['labelText'] ?? '',
-        dateFormat: map['dateFormat'] ?? 'dd.MM.yyyy',
-        initialValue: DateTime.tryParse(map['initialValue']),
-        autovalidateMode: map['autovalidateMode'] != null
-            ? AutovalidateMode.values[map['autovalidateMode'] as int]
-            : AutovalidateMode.disabled,
-        name: map['name'] ?? 'date');
+      labelText: map['labelText'] ?? '',
+      errorText: map['errorText'] ?? '',
+      dateFormat: map['dateFormat'] ?? 'dd.MM.yyyy',
+      name: map['name'] ?? 'date',
+      initialValue: DateTime.tryParse(map['initialValue']),
+      bottomSheetHeight: map['bottomSheetHeight']?.toDouble(),
+      closeButton: DynamicWidgetBuilder.buildFromMap(
+          map['closeButton'], buildContext, listener),
+      pickerDialogStyle: map['pickerDialogStyle'] != null
+          ? PickerDialogStyle.values[map['pickerDialogStyle'] as int]
+          : PickerDialogStyle.BOTTOM_SHEET,
+      autovalidateMode: map['autovalidateMode'] != null
+          ? AutovalidateMode.values[map['autovalidateMode'] as int]
+          : AutovalidateMode.disabled,
+    );
   }
 
   @override
