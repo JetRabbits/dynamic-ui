@@ -10,6 +10,7 @@ import 'package:dynamic_ui/parsers/form_builder_dropdown_field_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_parser.dart';
 import 'package:dynamic_ui/parsers/form_builder_text_field_parser.dart';
 import 'package:dynamic_ui/parsers/spacer_widget_parser.dart';
+import 'package:dynamic_ui/parsers/template_widget_parser.dart';
 import 'package:dynamic_widget/dynamic_widget.dart';
 import 'package:flutter_draft/flutter_draft.dart';
 import 'package:get_it/get_it.dart';
@@ -44,6 +45,7 @@ void setupDynamics() {
   DynamicWidgetBuilder.addParser(FormBuilderDatePickerParser());
   DynamicWidgetBuilder.addParser(FixedSizedBoxWidgetParser());
   DynamicWidgetBuilder.addParser(ActionManagerParser());
+  DynamicWidgetBuilder.addParser(TemplateWidgetParser());
 
   HandlersRegistry.register("actions", ActionsHandler(GetIt.I()));
 
