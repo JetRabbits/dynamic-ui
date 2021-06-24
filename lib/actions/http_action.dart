@@ -40,11 +40,12 @@ class HttpAction extends Action {
     late Response response;
     switch (method) {
       case 'post':
+        var _headers = Map<String, String>()
+          ..addAll(headers)
+          ..putIfAbsent(
+              HttpHeaders.contentTypeHeader, () => ContentType.json.toString());
         response = await post(Uri.parse(substituteParams(url, parameters)),
-            headers: headers
-              ..putIfAbsent(HttpHeaders.contentTypeHeader,
-                  () => ContentType.json.toString()),
-            body: resultForPost);
+            headers: _headers, body: resultForPost);
         break;
       case 'get':
         response = await get(Uri.parse(substituteParams(url, parameters)),
@@ -55,7 +56,8 @@ class HttpAction extends Action {
     }
     _logger.info("response: ${response.body}");
 
-    Map<String, dynamic> _responses = parameters.putIfAbsent("responses", () => <String, dynamic>{});
+    Map<String, dynamic> _responses =
+        parameters.putIfAbsent("responses", () => <String, dynamic>{});
     _responses[id] = response.body;
 
     return Future.value();
