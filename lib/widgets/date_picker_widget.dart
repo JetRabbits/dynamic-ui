@@ -30,6 +30,8 @@ class FormBuilderDatePicker extends StatelessWidget {
   final Color? buttonPrimaryColor;
   final Color? buttonOnPrimaryColor;
 
+  final double? buttonHeight;
+
   ///
   /// [dateFormat] DateFormat pattern see intl DateFormat for details
   ///
@@ -46,7 +48,8 @@ class FormBuilderDatePicker extends StatelessWidget {
       this.closeButton,
       this.decoration = const InputDecoration(),
       this.buttonPrimaryColor,
-      this.buttonOnPrimaryColor})
+      this.buttonOnPrimaryColor,
+      this.buttonHeight})
       : super(key: key) {
     this.initialValue = initialValue ?? DateTime.now();
   }
@@ -69,7 +72,7 @@ class FormBuilderDatePicker extends StatelessWidget {
         const SizedBox(width: 12),
         Material(
           child: SizedBox(
-            height: 48,
+            height: buttonHeight,
             child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                     primary: buttonPrimaryColor,
