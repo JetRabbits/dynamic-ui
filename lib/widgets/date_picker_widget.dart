@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class FormBuilderDatePicker extends StatelessWidget {
-  final String labelText;
+  final String buttonText;
 
   final String name;
 
@@ -25,20 +25,28 @@ class FormBuilderDatePicker extends StatelessWidget {
 
   double? bottomSheetHeight;
 
+  final InputDecoration decoration;
+
+  final Color? buttonPrimaryColor;
+  final Color? buttonOnPrimaryColor;
+
   ///
   /// [dateFormat] DateFormat pattern see intl DateFormat for details
   ///
   FormBuilderDatePicker(
       {Key? key,
       required this.dateFormat,
-      required this.labelText,
+      required this.buttonText,
       this.errorText,
       this.pickerDialogStyle = PickerDialogStyle.BOTTOM_SHEET,
       this.bottomSheetHeight,
       required this.name,
       DateTime? initialValue,
       this.autovalidateMode = AutovalidateMode.disabled,
-      this.closeButton})
+      this.closeButton,
+      this.decoration = const InputDecoration(),
+      this.buttonPrimaryColor,
+      this.buttonOnPrimaryColor})
       : super(key: key) {
     this.initialValue = initialValue ?? DateTime.now();
   }
@@ -55,11 +63,7 @@ class FormBuilderDatePicker extends StatelessWidget {
             name: name,
             initialValue: DateFormat(dateFormat).format(initialValue),
             readOnly: true,
-            decoration: InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                fillColor: Colors.white,
-                filled: true),
+            decoration: decoration,
           ),
         ),
         const SizedBox(width: 12),
@@ -67,7 +71,9 @@ class FormBuilderDatePicker extends StatelessWidget {
           child: SizedBox(
             height: 48,
             child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(primary: Color(0xFF1890FF)),
+                style: ElevatedButton.styleFrom(
+                    primary: buttonPrimaryColor,
+                    onPrimary: buttonOnPrimaryColor),
                 onPressed: () async {
                   switch (pickerDialogStyle) {
                     case PickerDialogStyle.BOTTOM_SHEET:
@@ -88,7 +94,7 @@ class FormBuilderDatePicker extends StatelessWidget {
                 },
                 icon: Icon(Icons.calendar_today),
                 label: Text(
-                  labelText,
+                  buttonText,
                   style: TextStyle(color: Colors.white),
                 )),
           ),
@@ -112,7 +118,8 @@ class FormBuilderDatePicker extends StatelessWidget {
 
   Widget _buildBottomSheet(context) {
     return Container(
-      height: bottomSheetHeight ?? max(MediaQuery.of(context).size.height / 3, 400),
+      height:
+          bottomSheetHeight ?? max(MediaQuery.of(context).size.height / 3, 400),
       child: Column(
         children: [
           CalendarDatePicker(
@@ -144,7 +151,8 @@ class FormBuilderDatePicker extends StatelessWidget {
   void _updateFormValue(DateTime? value) {
     if (value == null) return;
     var formBuilderState = FormBuilder.of(_rowKey.currentContext!);
-    formBuilderState?.patchValue({"$name": DateFormat(dateFormat).format(value)});
+    formBuilderState
+        ?.patchValue({"$name": DateFormat(dateFormat).format(value)});
     formBuilderState?.save();
   }
 }

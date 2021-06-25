@@ -48,7 +48,7 @@ class _DynamicProcessorState extends State<DynamicProcessor> {
               ? SizedBox.expand(
                   child: snapshot.data,
                 )
-              : const CircularProgressIndicator();
+              : SizedBox.expand( child: Center( child: const CircularProgressIndicator()));
         },
       ),
     );
