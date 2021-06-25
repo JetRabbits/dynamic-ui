@@ -13,6 +13,7 @@ class FormBuilderDatePickerParser extends WidgetParser {
     return <String, dynamic>{
       "type": widgetName,
       "buttonText": realWidget.buttonText,
+      "buttonHeight": realWidget.buttonHeight,
       "errorText": realWidget.errorText,
       "closeButton":
           DynamicWidgetBuilder.export(realWidget.closeButton, buildContext),
@@ -69,6 +70,7 @@ class FormBuilderDatePickerParser extends WidgetParser {
       ClickListener? listener) {
     return FormBuilderDatePicker(
       buttonText: map['buttonText'] ?? '',
+      buttonHeight: map['buttonHeight']?.toDouble(),
       buttonPrimaryColor: parseHexColor(map['buttonPrimaryColor']),
       buttonOnPrimaryColor: parseHexColor(map['buttonOnPrimaryColor']),
       errorText: map['errorText'] ?? '',

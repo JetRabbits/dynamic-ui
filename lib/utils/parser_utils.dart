@@ -1,7 +1,7 @@
-import 'package:dynamic_ui/widgets/mask_formatter.dart';
 import 'package:dynamic_widget/dynamic_widget/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 InputBorder? parseBorder(String borderKeyPrefix, Map<String, dynamic> map) {
   var type = map['borderType'];
@@ -34,22 +34,14 @@ InputBorder? parseBorder(String borderKeyPrefix, Map<String, dynamic> map) {
   }
 }
 
-Map<String, RegExp> _mapOfFilter(dynamic inputMap) {
-  Map<String, RegExp> result = <String, RegExp>{};
-  (inputMap as Map<String, dynamic>).forEach((key, value) {
-    result[key] = RegExp(value);
-  });
-  return result;
-}
-
 dynamic formattersToJson(List<TextInputFormatter>? formatters) =>
     formatters?.map((formatter) {
       if (formatter is LengthLimitingTextInputFormatter){
         return {"type": "max", "value": formatter.maxLength};
       }
 
-      if (formatter is MaskFormatter){
-        return {"type": "mask", "value": formatter.getMask(), "filter": formatter.filter.cast<String, dynamic>()};
+      if (formatter is MaskTextInputFormatter){
+        return {"type": "mask", "value": formatter.getMask()};
       }
 
       throw "Unsupported type '${formatter.runtimeType}";
@@ -62,7 +54,7 @@ List<TextInputFormatter> parseInputFormatters(String initialValue, List<dynamic>
     var type = f['type'];
     switch (type){
       case 'mask':
-        result.add(MaskFormatter(mask: f['value'], filter: _mapOfFilter(f['filters']), initialText: initialValue));
+        result.add(MaskTextInputFormatter(mask: f['value'], initialText: initialValue));
         break;
       case 'max':
         result.add(LengthLimitingTextInputFormatter(f['value']));
