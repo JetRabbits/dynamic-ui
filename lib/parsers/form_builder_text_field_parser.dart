@@ -1,10 +1,18 @@
 import 'package:dynamic_ui/dynamic_ui.dart';
 import 'package:dynamic_widget/dynamic_widget/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'form_field_validators_parser.dart';
+
+class MaskFormatter extends MaskTextInputFormatter {
+  final String mask;
+  final Map<String, RegExp> filter;
+  MaskFormatter({initialText, required this.mask, required this.filter}): super(initialText: initialText, mask: mask, filter: filter);
+}
 
 class FormBuilderTextFieldParser extends WidgetParser {
   @override
@@ -62,6 +70,7 @@ class FormBuilderTextFieldParser extends WidgetParser {
       "errorMaxLines": realWidget.decoration.errorMaxLines,
       "isDense": realWidget.decoration.isDense,
       "textCapitalization": realWidget.textCapitalization.index,
+      "inputFormatters": _formatterToJson(realWidget.inputFormatters)
     };
   }
 
@@ -112,6 +121,7 @@ class FormBuilderTextFieldParser extends WidgetParser {
             ? TextCapitalization.values[map['textCapitalization']]
             : TextCapitalization.none,
         style: parseTextStyle(map['style']),
+        inputFormatters: map['inputFormatters'] != null ? _parseInputFormatters(map['initialValue'], map['inputFormatters']) : null,
         validator:
             FormFieldValidatorParser.fromJson(map['validator'], buildContext),
         decoration: InputDecoration(
@@ -146,4 +156,44 @@ class FormBuilderTextFieldParser extends WidgetParser {
 
   @override
   Type get widgetType => FormBuilderTextField;
+
+  Map<String, RegExp> _mapOfFilter(dynamic inputMap) {
+    Map<String, RegExp> result = <String, RegExp>{};
+    (inputMap as Map<String, dynamic>).forEach((key, value) {
+      result[key] = RegExp(value);
+    });
+    return result;
+  }
+
+  dynamic _formatterToJson(List<TextInputFormatter>? formatters) =>
+    formatters?.map((formatter) {
+      if (formatter is LengthLimitingTextInputFormatter){
+        return {"type": "max", "value": formatter.maxLength};
+      }
+
+      if (formatter is MaskFormatter){
+        return {"type": "mask", "value": formatter.getMask(), "filter": formatter.filter.cast<String, dynamic>()};
+      }
+
+      throw "Unsupported type '${formatter.runtimeType}";
+    }).toList();
+
+
+  List<TextInputFormatter> _parseInputFormatters(String initialValue, List<dynamic> formatters) {
+    List<TextInputFormatter> result = [];
+    for (var f in formatters){
+      var type = f['type'];
+      switch (type){
+        case 'mask':
+          result.add(MaskTextInputFormatter(mask: f['value'], filter: _mapOfFilter(f['filters']), initialText: initialValue));
+          break;
+        case 'max':
+          result.add(LengthLimitingTextInputFormatter(f['value']));
+          break;
+        default:
+          throw "Unsupported type of formatter '$type'";
+      }
+    }
+    return result;
+  }
 }

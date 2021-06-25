@@ -30,7 +30,7 @@ class FormBuilderDatePickerParser extends WidgetParser {
       errorText: map['errorText'] ?? '',
       dateFormat: map['dateFormat'] ?? 'dd.MM.yyyy',
       name: map['name'] ?? 'date',
-      initialValue: DateTime.tryParse(map['initialValue']),
+      initialValue: map['initialValue'] != null ? DateTime.tryParse(map['initialValue']): null,
       bottomSheetHeight: map['bottomSheetHeight']?.toDouble(),
       closeButton: DynamicWidgetBuilder.buildFromMap(
           map['closeButton'], buildContext, listener),
