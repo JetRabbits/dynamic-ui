@@ -12,7 +12,7 @@ class FormBuilderDatePickerParser extends WidgetParser {
     var realWidget = widget as FormBuilderDatePicker;
     return <String, dynamic>{
       "type": widgetName,
-      "labelText": realWidget.buttonText,
+      "buttonText": realWidget.buttonText,
       "errorText": realWidget.errorText,
       "closeButton":
           DynamicWidgetBuilder.export(realWidget.closeButton, buildContext),
