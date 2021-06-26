@@ -1,6 +1,7 @@
 import 'package:dynamic_ui/dynamic_ui.dart';
 import 'package:dynamic_ui/utils/parser_utils.dart';
 import 'package:dynamic_widget/dynamic_widget/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -14,6 +15,7 @@ class FormBuilderTextFieldParser extends WidgetParser {
   @override
   Map<String, dynamic>? export(Widget? widget, BuildContext? buildContext) {
     FormBuilderTextField realWidget = widget as FormBuilderTextField;
+    var keyboardTypeJson = realWidget.keyboardType?.toJson();
     return <String, dynamic>{
       "type": widgetName,
       "obscureText": realWidget.obscureText,
@@ -25,6 +27,9 @@ class FormBuilderTextFieldParser extends WidgetParser {
       "validator":
           FormFieldValidatorParser.getRegisteredBuilder(realWidget.name)
               ?.toJson(),
+      "keyboardType": keyboardTypeJson?['name'],
+      "signed": keyboardTypeJson?['signed'],
+      "decimal": keyboardTypeJson?['decimal'],
       "hintText": realWidget.decoration.hintText,
       "labelText": realWidget.decoration.labelText,
       "fillColor": realWidget.decoration.fillColor?.value.toRadixString(16),
@@ -90,6 +95,7 @@ class FormBuilderTextFieldParser extends WidgetParser {
         inputFormatters: map['inputFormatters'] != null ? parseInputFormatters(map['initialValue'], map['inputFormatters']) : null,
         validator:
             FormFieldValidatorParser.fromJson(map['validator'], buildContext),
+        keyboardType: parseTextInputType(map['keyboardType'], decimal: map['decimal'], signed: map['signed']),
         decoration: InputDecoration(
           hintText: map['hintText'],
           labelText: map['labelText'],

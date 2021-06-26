@@ -47,6 +47,38 @@ dynamic formattersToJson(List<TextInputFormatter>? formatters) =>
       throw "Unsupported type '${formatter.runtimeType}";
     }).toList();
 
+TextInputType? parseTextInputType(String? type, {bool? decimal, bool? signed}){
+  if (type == null) return null;
+
+  String name = type.toString();
+  switch (name){
+    case 'name':
+      return TextInputType.name;
+    case 'text':
+      return TextInputType.text;
+    case 'url':
+      return TextInputType.url;
+    case 'datetime':
+      return TextInputType.datetime;
+    case 'email':
+      return TextInputType.emailAddress;
+    case 'multiline':
+      return TextInputType.multiline;
+    case 'number':
+      return TextInputType.number;
+    case 'phone':
+      return TextInputType.phone;
+    case 'address':
+      return TextInputType.streetAddress;
+    case 'password':
+      return TextInputType.visiblePassword;
+    case 'number':
+      return TextInputType.numberWithOptions(decimal: decimal, signed: signed);
+    default:
+      throw "Unsupported type '$type'";
+  }
+}
+
 
 List<TextInputFormatter> parseInputFormatters(String initialValue, List<dynamic> formatters) {
   List<TextInputFormatter> result = [];
