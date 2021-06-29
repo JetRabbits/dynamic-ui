@@ -41,7 +41,7 @@ class HttpAction extends Action {
     switch (method) {
       case 'post':
         var _headers = Map<String, String>()
-          ..addAll(headers)
+          ..addAll(headers ?? {})
           ..putIfAbsent(
               HttpHeaders.contentTypeHeader, () => ContentType.json.toString());
         response = await post(Uri.parse(substituteParams(url, parameters)),
