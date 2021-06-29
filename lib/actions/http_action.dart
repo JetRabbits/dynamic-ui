@@ -13,7 +13,7 @@ part 'http_action.g.dart';
 class HttpAction extends Action {
   final String url;
   final Map<String, dynamic> payload;
-  final Map<String, String> headers;
+  final Map<String, String>? headers;
   final String method;
 
   HttpAction(
