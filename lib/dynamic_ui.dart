@@ -1,5 +1,6 @@
 library dynamic_ui;
 
+import 'package:dynamic_ui/actions/replace_action.dart';
 import 'package:dynamic_ui/handlers/handlers.dart';
 import 'package:dynamic_ui/parsers/action_manager_parser.dart';
 import 'package:dynamic_ui/parsers/date_picker_widget_parser.dart';
@@ -54,4 +55,6 @@ void setupDynamics() {
       'launch', LaunchAction.toJson, LaunchAction.fromJson);
   ActionRegister.addAction(
       'navigator', NavigatorAction.toJson, NavigatorAction.fromJson);
+  ActionRegister.addAction(
+      'replace', ReplaceAction.toJson, ReplaceAction.fromJson);
 }
