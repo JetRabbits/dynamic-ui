@@ -24,7 +24,7 @@ dependencies:
   dynamic_widget: ^4.0.3
   file_picker: ^3.0.2+2
   url_launcher: ^6.0.4
-  flutter_bloc: ^7.0.1
+  flutter_bloc: ^8.1.1
   get_it: ^7.1.4
   flutter_draft:
     git:
